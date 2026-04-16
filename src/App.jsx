@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -6,238 +6,326 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-const appStyle = {
+/* ---------- COMMON STYLES ---------- */
+
+const outer = {
   minHeight: "100vh",
-  background: "#f5f5f5",
+  background: "#f2f2f2",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
   fontFamily: "Arial, sans-serif",
 };
 
-const mobileFrame = {
+const mobile = {
   width: "375px",
   height: "812px",
   background: "#ffffff",
-  borderRadius: "0px",
-  overflow: "hidden",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+  border: "1px solid #e2e2e2",
   position: "relative",
+  overflow: "hidden",
 };
 
-const pagePadding = {
-  padding: "40px 24px",
+const pad = {
+  padding: "28px 22px",
 };
 
-const inputStyle = {
+const input = {
   width: "100%",
-  padding: "14px",
-  marginBottom: "14px",
+  padding: "12px",
   border: "1px solid #d9d9d9",
-  borderRadius: "8px",
-  fontSize: "14px",
+  borderRadius: "6px",
+  marginBottom: "14px",
   outline: "none",
   boxSizing: "border-box",
 };
 
-const primaryBtn = {
+const purpleBtn = {
   width: "100%",
-  padding: "14px",
+  padding: "13px",
   border: "none",
-  borderRadius: "8px",
+  borderRadius: "6px",
   background: "#6C25FF",
   color: "#fff",
   fontWeight: "bold",
-  fontSize: "14px",
   cursor: "pointer",
 };
 
-const secondaryBtn = {
+const lightBtn = {
   width: "100%",
-  padding: "14px",
+  padding: "13px",
   border: "none",
-  borderRadius: "8px",
+  borderRadius: "6px",
   background: "#ceb8ff",
   color: "#111",
   fontWeight: "bold",
-  fontSize: "14px",
   cursor: "pointer",
-  marginTop: "12px",
 };
 
-function Wrapper({ children }) {
+function Layout({ children }) {
   return (
-    <div style={appStyle}>
-      <div style={mobileFrame}>{children}</div>
+    <div style={outer}>
+      <div style={mobile}>{children}</div>
     </div>
   );
 }
+
+/* ---------- PAGE 1 LANDING ---------- */
 
 function Landing() {
   const navigate = useNavigate();
 
   return (
-    <Wrapper>
+    <Layout>
       <div
         style={{
-          ...pagePadding,
           position: "absolute",
-          bottom: "30px",
-          left: 0,
-          right: 0,
+          bottom: "35px",
+          left: "22px",
+          right: "22px",
         }}
       >
-        <h1
-          style={{ fontSize: "28px", marginBottom: "10px", color: "#1d1d1d" }}
-        >
+        <h1 style={{ margin: 0, fontSize: "28px", color: "#1d1d1d" }}>
           Welcome to PopX
         </h1>
 
-        <p style={{ color: "#777", lineHeight: "1.5", marginBottom: "24px" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        <p
+          style={{
+            color: "#777",
+            lineHeight: "1.5",
+            marginTop: "10px",
+            marginBottom: "24px",
+          }}
+        >
+          Lorem ipsum dolor sit amet,
+          <br />
+          consectetur adipiscing elit,
         </p>
 
-        <button style={primaryBtn} onClick={() => navigate("/signup")}>
+        <button style={purpleBtn} onClick={() => navigate("/signup")}>
           Create Account
         </button>
 
-        <button style={secondaryBtn} onClick={() => navigate("/login")}>
+        <button
+          style={{ ...lightBtn, marginTop: "12px" }}
+          onClick={() => navigate("/login")}
+        >
           Already Registered? Login
         </button>
       </div>
-    </Wrapper>
+    </Layout>
   );
 }
+
+/* ---------- PAGE 2 LOGIN ---------- */
 
 function Login() {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const loginUser = () => {
+    const oldUser = JSON.parse(localStorage.getItem("user")) || {};
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        ...oldUser,
+        email,
+      }),
+    );
+
+    navigate("/profile");
+  };
+
   return (
-    <Wrapper>
-      <div style={pagePadding}>
-        <h1 style={{ fontSize: "28px", marginBottom: "10px" }}>
-          Signin to your PopX account
+    <Layout>
+      <div style={pad}>
+        <h1 style={{ fontSize: "30px", marginBottom: "10px" }}>
+          Signin to your
+          <br />
+          PopX account
         </h1>
 
-        <p style={{ color: "#777", marginBottom: "24px", lineHeight: "1.5" }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+        <p
+          style={{
+            color: "#777",
+            lineHeight: "1.5",
+            marginBottom: "22px",
+          }}
+        >
+          Lorem ipsum dolor sit amet,
+          <br />
+          consectetur adipiscing elit,
         </p>
 
         <input
-          type="email"
+          style={input}
           placeholder="Enter email address"
-          style={inputStyle}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
+          style={input}
           type="password"
           placeholder="Enter password"
-          style={inputStyle}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
 
         <button
-          style={{ ...primaryBtn, background: "#c7c7c7", color: "#fff" }}
-          onClick={() => navigate("/profile")}
+          style={{
+            ...purpleBtn,
+            background: "#cbcbcb",
+            color: "#fff",
+          }}
+          onClick={loginUser}
         >
           Login
         </button>
       </div>
-    </Wrapper>
+    </Layout>
   );
 }
+
+/* ---------- PAGE 3 SIGNUP ---------- */
 
 function Signup() {
   const navigate = useNavigate();
 
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [company, setCompany] = useState("");
+  const [agency, setAgency] = useState("Yes");
+
+  const createAccount = () => {
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name,
+        phone,
+        email,
+        company,
+        agency,
+      }),
+    );
+
+    navigate("/profile");
+  };
+
   return (
-    <Wrapper>
-      <div style={pagePadding}>
-        <h1 style={{ fontSize: "28px", marginBottom: "20px" }}>
-          Create your PopX account
+    <Layout>
+      <div style={pad}>
+        <h1 style={{ fontSize: "30px", marginBottom: "18px" }}>
+          Create your
+          <br />
+          PopX account
         </h1>
 
-        <input type="text" placeholder="Full Name" style={inputStyle} />
-        <input type="text" placeholder="Phone number" style={inputStyle} />
-        <input type="email" placeholder="Email address" style={inputStyle} />
-        <input type="password" placeholder="Password" style={inputStyle} />
-        <input type="text" placeholder="Company name" style={inputStyle} />
+        <input
+          style={input}
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-        <div
-          style={{ marginTop: "10px", marginBottom: "30px", fontSize: "14px" }}
-        >
-          <p style={{ marginBottom: "10px" }}>Are you an Agency?</p>
+        <input
+          style={input}
+          placeholder="Phone number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
 
-          <label style={{ marginRight: "20px" }}>
-            <input type="radio" name="agency" defaultChecked /> Yes
-          </label>
+        <input
+          style={input}
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-          <label>
-            <input type="radio" name="agency" /> No
-          </label>
-        </div>
+        <input
+          style={input}
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <input
+          style={input}
+          placeholder="Company name"
+          value={company}
+          onChange={(e) => setCompany(e.target.value)}
+        />
+
+        <p style={{ marginBottom: "8px", fontSize: "14px" }}>
+          Are you an Agency?
+        </p>
+
+        <label style={{ marginRight: "18px" }}>
+          <input
+            type="radio"
+            checked={agency === "Yes"}
+            onChange={() => setAgency("Yes")}
+          />{" "}
+          Yes
+        </label>
+
+        <label>
+          <input
+            type="radio"
+            checked={agency === "No"}
+            onChange={() => setAgency("No")}
+          />{" "}
+          No
+        </label>
 
         <button
           style={{
-            ...primaryBtn,
+            ...purpleBtn,
             position: "absolute",
-            bottom: "30px",
-            left: "24px",
-            width: "calc(100% - 48px)",
+            left: "22px",
+            right: "22px",
+            bottom: "28px",
+            width: "calc(100% - 44px)",
           }}
-          onClick={() => navigate("/profile")}
+          onClick={createAccount}
         >
           Create Account
         </button>
       </div>
-    </Wrapper>
+    </Layout>
   );
 }
+
+/* ---------- PAGE 4 PROFILE ---------- */
 
 function Profile() {
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+
   return (
-    <Wrapper>
-      <div style={{ background: "#f6f6f6", height: "100%" }}>
-        <div
-          style={{
-            background: "#fff",
-            padding: "18px 24px",
-            fontWeight: "bold",
-            borderBottom: "1px solid #eee",
-          }}
-        >
-          Account Settings
+    <Layout>
+      <div style={{ padding: "24px" }}>
+        <h2>Account Settings</h2>
+
+        <div style={{ marginTop: "20px" }}>
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+          <p>{user.phone}</p>
+          <p>{user.company}</p>
         </div>
 
-        <div style={{ padding: "24px" }}>
-          <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
-            <div
-              style={{
-                width: "72px",
-                height: "72px",
-                borderRadius: "50%",
-                background: "#ccc",
-              }}
-            ></div>
-
-            <div>
-              <div style={{ fontWeight: "bold", marginBottom: "6px" }}>
-                Marry Doe
-              </div>
-              <div style={{ fontSize: "14px", color: "#555" }}>
-                Marry@example.com
-              </div>
-            </div>
-          </div>
-
-          <p style={{ marginTop: "20px", color: "#444", lineHeight: "1.6" }}>
-            Lorem Ipsum Dolor Sit Amet, Consetetur Sadipscing Elitr, Sed Diam
-            Nonumy Eirmod Tempor Invidunt Ut Labore Et Dolore Magna Aliquyam
-            Erat.
-          </p>
-        </div>
+        <p style={{ marginTop: "20px" }}>Welcome to your profile page.</p>
       </div>
-    </Wrapper>
+    </Layout>
   );
 }
+
+/* ---------- APP ---------- */
 
 export default function App() {
   return (
